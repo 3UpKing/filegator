@@ -158,7 +158,7 @@ const funcs = {
       return Vue.config.baseURL+'/download&path='+encodeURIComponent(Base64.encode(path))
     },
     hasPreview(name) {
-      return this.isText(name) || this.isImage(name)
+      return this.isText(name) || this.isImage(name) || this.isVideo(name)
     },
     isText(name) {
       return this.hasExtension(name, store.state.config.editable)
