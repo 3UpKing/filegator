@@ -166,6 +166,9 @@ const funcs = {
     isImage(name) {
       return this.hasExtension(name, ['.jpg', '.jpeg', '.gif', '.png', '.bmp', '.svg', '.tiff', '.tif'])
     },
+    isVideo(name) {
+      return this.hasExtension(name, ['.mp4', '.mov', '.wmv', '.avi', '.mkv', '.flv'])
+    },    
     hasExtension(name, exts) {
       return !_.isEmpty(exts) && (new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$', 'i')).test(name)
     },
