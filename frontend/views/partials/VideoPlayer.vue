@@ -7,6 +7,7 @@
           <div class="column mainbox">
             <video controls>
               <source :src="videoSrc(currentItem.path)" type="video/mp4">
+              <source :src="videoSrc(currentItem.path)" type="video/mkv">
               Your browser does not support the video tag.
             </video>
           </div>
