@@ -5,7 +5,7 @@
         <strong>{{ currentItem.name }}</strong>
         <div class="columns is-mobile">
           <div class="column mainbox">
-            <video controls>
+            <video controls class="video-player">
               <source :src="videoSrc(currentItem.path)" type="video/mp4">
               <source :src="videoSrc(currentItem.path)" type="video/mkv">
               Your browser does not support the video tag.
@@ -77,6 +77,12 @@ export default {
 .sidebox a {
   padding: 5px 0 5px 0;
   display: block;
+}
+
+.video-player {
+  width: 100%; 
+  height: 100%; 
+  object-fit: scale-down;
 }
 
 </style>
