@@ -57,22 +57,53 @@ class DownloadController
 
         if ($rangeHeader) {
             // Parse the "Range" header to get the start and end bytes
-            list($units, $range) = explode('=', $rangeHeader, 2);
-            list($start, $end) = explode('-', $range, 2);
-            $start = max(0, intval($start));
-            $end = min($end, $file['filesize'] - 1);
 
-            // Calculate the length of the content to be streamed
-            $length = $end - $start + 1;
+            $rangeParts = explode('=', $rangeHeader, 2);
+            if (count($rangeParts) === 2 && $rangeParts[0] === 'bytes') {
+                $rangeSpecs = explode(',', $rangeParts[1]);
 
-            // Set the appropriate HTTP status code for partial content
-            $streamedResponse->setStatusCode(206);
+                // Initialize variables for start and end bytes
+                $start = null;
+                $end = null;
 
-            // Set the "Content-Range" header to specify the range being sent
-            $streamedResponse->headers->set('Content-Range', "bytes $start-$end/{$file['filesize']}");
+                foreach ($rangeSpecs as $rangeSpec) {
+                    $range = explode('-', $rangeSpec);
 
-            // Move the file pointer to the start of the requested range
-            fseek($file['stream'], $start);
+                    // Handle the case where a single byte is requested, e.g., "bytes=0-0"
+                    if (count($range) === 1) {
+                        $start = (int)$range[0];
+                        $end = $start;
+                    }
+
+                    // Handle the case where the end byte is omitted, e.g., "bytes=1000-"
+                    elseif ($range[0] !== '') {
+                        $start = (int)$range[0];
+                        $end = $file['filesize'] - 1;
+                    }
+
+                    // Handle the case where both start and end bytes are specified, e.g., "bytes=0-499"
+                    else {
+                        $start = (int)$range[0];
+                        $end = (int)$range[1];
+                    }
+                }
+
+                // Ensure the start and end values are within valid bounds
+                $start = max(0, $start);
+                $end = min($end, $file['filesize'] - 1);
+
+                // Calculate the length of the content to be streamed
+                $length = $end - $start + 1;
+
+                // Set the appropriate HTTP status code for partial content
+                $streamedResponse->setStatusCode(206);
+
+                // Set the "Content-Range" header to specify the range being sent
+                $streamedResponse->headers->set('Content-Range', "bytes $start-$end/{$file['filesize']}");
+
+                // Move the file pointer to the start of the requested range
+                fseek($file['stream'], $start);
+            }
         } else {
             // No "Range" header, treat it as a full download
             $length = $file['filesize'];
