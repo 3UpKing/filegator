@@ -168,7 +168,7 @@ const funcs = {
     },
     isVideo(name) {
       return this.hasExtension(name, ['.mp4', '.mov', '.wmv', '.avi', '.mkv', '.flv'])
-    },    
+    },
     hasExtension(name, exts) {
       return !_.isEmpty(exts) && (new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$', 'i')).test(name)
     },
