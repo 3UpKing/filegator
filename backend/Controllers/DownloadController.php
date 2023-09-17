@@ -52,18 +52,42 @@ class DownloadController
             return $response->redirect('/');
         }
 
-        $streamedResponse->setCallback(function () use ($file) {
-            // @codeCoverageIgnoreStart
+        // Check if the request includes the "Range" header
+        $rangeHeader = $request->headers->get('Range');
+
+        if ($rangeHeader) {
+            // Parse the "Range" header to get the start and end bytes
+            list($units, $range) = explode('=', $rangeHeader, 2);
+            list($start, $end) = explode('-', $range, 2);
+            $start = max(0, intval($start));
+            $end = min($end, $file['filesize'] - 1);
+
+            // Calculate the length of the content to be streamed
+            $length = $end - $start + 1;
+
+            // Set the appropriate HTTP status code for partial content
+            $streamedResponse->setStatusCode(206);
+
+            // Set the "Content-Range" header to specify the range being sent
+            $streamedResponse->headers->set('Content-Range', "bytes $start-$end/{$file['filesize']}");
+
+            // Move the file pointer to the start of the requested range
+            fseek($file['stream'], $start);
+        } else {
+            // No "Range" header, treat it as a full download
+            $length = $file['filesize'];
+        }
+
+        $streamedResponse->setCallback(function () use ($file, $length) {
             set_time_limit(0);
-            if ($file['stream']) {
-                while (! feof($file['stream'])) {
-                    echo fread($file['stream'], 1024 * 8);
-                    if (ob_get_level() > 0) {ob_flush();}
-                    flush();
-                }
-                fclose($file['stream']);
+            while (!feof($file['stream']) && $length > 0) {
+                // Read and echo data in chunks
+                $chunkSize = min(1024 * 8, $length); // Chunk size of 8KB or remaining length
+                echo fread($file['stream'], $chunkSize);
+                $length -= $chunkSize;
+                flush();
             }
-            // @codeCoverageIgnoreEnd
+            fclose($file['stream']);
         });
 
         $extension = pathinfo($file['filename'], PATHINFO_EXTENSION);
@@ -91,12 +115,9 @@ class DownloadController
             'Content-Transfer-Encoding',
             'binary'
         );
-        if (isset($file['filesize'])) {
-            $streamedResponse->headers->set(
-                'Content-Length',
-                $file['filesize']
-            );
-        }
+
+        $streamedResponse->headers->set('Content-Length', $length);
+
         // @codeCoverageIgnoreStart
         if (APP_ENV == 'development') {
             $streamedResponse->headers->set(
@@ -110,7 +131,6 @@ class DownloadController
         }
         // @codeCoverageIgnoreEnd
 
-        // close session so we can continue streaming, note: dev is single-threaded
         $this->session->save();
 
         $streamedResponse->send();
