@@ -103,6 +103,8 @@ class DownloadController
 
         $contentDisposition = HeaderUtils::makeDisposition($disposition, $file['filename'], 'file');
 
+        $streamedResponse->headers->set('Accept-Ranges', 'bytes');
+
         $streamedResponse->headers->set(
             'Content-Disposition',
             $contentDisposition
