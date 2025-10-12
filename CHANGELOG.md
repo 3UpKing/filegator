@@ -2,6 +2,26 @@
 
 ## Upcoming...
 
+## 7.13.0 - 2024-02-25
+* Added a column to display chmod permissions (see #522)
+* Extract app theme SCSS to external files (see #524)
+* Configurable pagination (see #533)
+* Fix lazy loading images all being loaded when opening gallery (see #534)
+
+## 7.12.0 - 2024-12-13
+* Dependency updates (see #506)
+* Min PHP version set to 8.1
+* Added support for NodeJS up to v22
+* Dark theme added using prefers-color-scheme (see #499)
+* Automatic multiarch docker deployment after release (amd64, arm7/8, 386)
+
+## 7.11.1 - 2024-11-27
+* Ukrainian translations added, thanks @jekasumy @jaapmarcus
+
+## 7.11.0 - 2024-10-28
+* Improved LDAP adapter, thanks @ahaenggli
+* Fix file permissions, thanks @yahesh
+
 ## 7.10.1 - 2024-04-24
 * Update docker container from php7-apache-buster to php8.3-apache-bullseye
 * Dependency updates for PHP
