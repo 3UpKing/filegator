@@ -1,6 +1,38 @@
 # Changelog
 
 ## Upcoming...
+* Fix unreadable .box text in dark theme, thanks @TowyTowy (see #589)
+* Add Danish translation (see #590)
+* Open the folder itself when selecting a folder search result (see #591 by @TowyTowy)
+
+## 7.14.3 - 2026-05-22
+* Added upload speed metric to the bottom pane, thanks @NikhilC2209 (see #581)
+* Unhandled exceptions logged to stdout and shown as generic internal server errors
+* Better Dockerfile.dev for local development - install dependencies and run as non-root
+
+## 7.14.2 - 2026-05-18
+* Security fix: validate permission bits when using chmod, reported by Abdul Moiz (https://github.com/moizxsec).
+
+## 7.14.1 - 2026-05-18
+* Fixed broken guest upload (see #583)
+
+## 7.14.0 - 2026-04-18
+* Reworked bottom pane for file uploads by @NikhilC2209 (see #580)
+
+## 7.13.5 - 2026-04-13
+* Security fix, see #579, thanks @NikhilC2209 for reporting
+
+## 7.13.4 - 2026-03-03
+* Session fixation fixed by regenerating session on login
+
+## 7.13.3 - 2026-01-19
+* Update Dockerfile to use node 22
+
+## 7.13.2 - 2026-01-19
+* Fix cicd pipeline, use ubuntu-22 for ci-dockerhub build
+
+## 7.13.1 - 2026-01-19
+* Prevent deletion of guest user in deleteUser method
 
 ## 7.13.0 - 2024-02-25
 * Added a column to display chmod permissions (see #522)
